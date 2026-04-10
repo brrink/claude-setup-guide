@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Setup Guide</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="header-title">
+        <h1>Claude Code Setup Guide</h1>
+        <span class="header-subtitle">Agentic-first Development</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <nav class="view-switcher" role="tablist">
+        <button class="view-tab active" data-view="wizard" role="tab" aria-selected="true">Wizard</button>
+        <button class="view-tab" data-view="reference" role="tab" aria-selected="false">Quick Ref</button>
+        <button class="view-tab" data-view="troubleshooting" role="tab" aria-selected="false">Troubleshoot</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+    <span class="progress-label" id="progressLabel">0 of 16 steps complete</span>
+  </div>
+
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+      <div class="sidebar-footer">
+        <button class="btn-reset" id="resetBtn">Reset Progress</button>
+      </div>
+    </aside>
+    <main class="main-content" id="mainContent"></main>
+  </div>
+
+  <div class="bottom-nav" id="bottomNav">
+    <button class="btn btn-secondary" id="prevBtn">&larr; Previous</button>
+    <button class="btn btn-primary" id="nextBtn">Mark Complete &amp; Next &rarr;</button>
+  </div>
+
+  <div class="modal-overlay" id="resetModal">
+    <div class="modal">
+      <h3>Reset Progress?</h3>
+      <p>This will mark all steps as incomplete and return to step 1.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="resetCancel">Cancel</button>
+        <button class="btn btn-danger" id="resetConfirm">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
