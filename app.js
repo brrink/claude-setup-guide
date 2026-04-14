@@ -212,14 +212,14 @@ const GUIDE_DATA = {
             { type: 'warning', text: 'After installing Node via FNM, you <strong>must</strong> close your terminal and open a fresh one. New packages aren\'t recognized until you start a new terminal session.' }
           ],
           commands: [
-            { label: 'Set up FNM environment', cmd: 'eval "$(fnm env)"', output: '' },
+            { label: 'Set up FNM environment', cmd: 'eval "$(fnm env --use-on-cd)"', output: '' },
             { label: 'Install Node.js (latest LTS)', cmd: 'fnm install --lts', output: 'Installing Node vXX.x.x (arm64)\ninstalled successfully' },
             { label: 'Verify Node (run in NEW terminal)', cmd: 'node -v', output: 'v22.x.x' },
             { label: 'Verify NPM', cmd: 'npm -v', output: '10.x.x' }
           ],
           troubleshooting: [
             { symptom: '"node: command not found" after installing', fix: '<strong>Close your terminal completely</strong> (Cmd+Q, not just closing the tab) and open a brand new terminal. The PATH needs to refresh. Then try <code>node -v</code> again.' },
-            { symptom: 'Still not found after reopening terminal', fix: 'Run <code>eval "$(fnm env)"</code> first, then try <code>node -v</code>. You may also need to add the fnm env line to your shell profile (~/.zshrc or ~/.zprofile).' },
+            { symptom: 'Still not found after reopening terminal', fix: 'Run <code>eval "$(fnm env --use-on-cd)"</code> first, then try <code>node -v</code>. You may also need to add the fnm env line to your shell profile (~/.zshrc or ~/.zprofile).' },
             { symptom: '"npx: command not found"', fix: 'Same fix — close/reopen terminal. NPM (and npx) come bundled with Node, so if node works, npx should too.' }
           ],
           verification: 'Running <code>node -v</code> shows a version (v22.x.x or similar) and <code>npm -v</code> shows a version (10.x.x or similar).'
@@ -244,7 +244,7 @@ const GUIDE_DATA = {
             { type: 'info', text: 'The <code>~/.claude/</code> folder is hidden by default. In Finder, press <strong>Cmd+Shift+.</strong> to toggle hidden files.' }
           ],
           commands: [
-            { label: 'Install Domo skills', cmd: 'npx skills', output: 'Need to install the following packages:\n  skills\nOk to proceed? (y) y\n\nFound XX skills\nInstalling to XX agents...\n✓ Installed skill-1 to agent-1\n✓ Installed skill-2 to agent-2\n...\nDone!' }
+            { label: 'Install Domo skills', cmd: 'npx skills add https://github.com/stahura/domo-ai-vibe-rules/skills --all -g', output: 'Need to install the following packages:\n  skills\nOk to proceed? (y) y\n\nFound XX skills\nInstalling to XX agents...\n✓ Installed skill-1 to agent-1\n✓ Installed skill-2 to agent-2\n...\nDone!' }
           ],
           troubleshooting: [
             { symptom: '"npx: command not found"', fix: 'Make sure Node/NPM are installed (Step 10). Close and reopen your terminal, then try again.' },
@@ -266,8 +266,8 @@ const GUIDE_DATA = {
             { label: 'Prompt to test skills', cmd: 'What skills do you have? List all Domo-specific skills.', output: 'I have access to the following skills:\n\n**General Skills:**\n- ...\n\n**Domo Platform Skills:**\n- card-creation: Create and validate Domo cards...\n- dataset-query: Query datasets...\n- app-studio: Build App Studio pages...\n- manifest: Configure manifest mappings...\n- beast-mode-creation: Create beast modes...\n...and more' }
           ],
           troubleshooting: [
-            { symptom: 'Claude doesn\'t list any Domo skills', fix: 'Verify the skills folder exists at <code>~/.claude/skills/</code>. If it\'s empty or missing, re-run <code>npx skills</code> from your VS Code terminal.' },
-            { symptom: 'Claude lists some but not all skills', fix: 'Run <code>npx skills</code> again — it will update/install any missing skills.' }
+            { symptom: 'Claude doesn\'t list any Domo skills', fix: 'Verify the skills folder exists at <code>~/.claude/skills/</code>. If it\'s empty or missing, re-run <code>npx skills add https://github.com/stahura/domo-ai-vibe-rules/skills --all -g</code> from your VS Code terminal.' },
+            { symptom: 'Claude lists some but not all skills', fix: 'Run <code>npx skills add https://github.com/stahura/domo-ai-vibe-rules/skills --all -g</code> again — it will update/install any missing skills.' }
           ],
           verification: 'Claude lists Domo-specific skills like card-creation, dataset-query, app-studio, etc.'
         },
@@ -284,7 +284,7 @@ const GUIDE_DATA = {
           ],
           callouts: [
             { type: 'info', text: '<strong>Rules vs Skills:</strong> Rules are always present in every prompt — they provide constant context. Skills are invoked on-demand when needed. Keep rules minimal and only include things that are always applicable.' },
-            { type: 'warning', text: 'The <code>npx skills</code> command does NOT install rules. You must download and place them manually.' }
+            { type: 'warning', text: 'The <code>npx skills add</code> command does NOT install rules. You must download and place them manually.' }
           ],
           commands: [
             { label: 'Verify rules folder exists', cmd: 'ls ~/.claude/rules/', output: 'orchestrator.md\nbest-practices.md' }

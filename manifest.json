@@ -8,5 +8,8 @@
   "fileName": "manifest.json",
   "id": "116928ac-b92e-4448-bd03-730143cd45b5",
   "proxyId": "",
-  "datasetsMapping": []
+  "datasetsMapping": [],
+  "uploadDirs": [
+    "dist"
+  ]
 }
