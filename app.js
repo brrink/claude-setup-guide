@@ -116,21 +116,24 @@ const GUIDE_DATA = {
           title: 'Install Claude Code Extension',
           minutes: 3,
           instructions: [
-            'In VS Code, click the <strong>Extensions</strong> icon in the left sidebar (the four-squares icon).',
-            'Search for <strong>"Claude Code"</strong>.',
-            'Click <strong>Install</strong> on the top result (called "Claude Code" or "Claude for VS Code").',
-            'After installation, you\'ll see a Claude icon appear in your sidebar.',
-            'Click the Claude icon to open the Claude panel.',
-            '<strong>Important:</strong> To authenticate, click the <strong>middle/console button</strong> — NOT the top button. The top button requires a personal Max/Pro subscription.'
+            'In VS Code, press <strong>Cmd+Shift+X</strong> (Mac) or <strong>Ctrl+Shift+X</strong> (Windows/Linux) to open the Extensions view.',
+            'Search for <strong>"Claude Code"</strong> and install the extension published by <strong>Anthropic</strong>.',
+            'After installation you\'ll see the <strong>Spark icon</strong> (✱) in several places: the top-right of the editor toolbar (when a file is open), the Activity Bar on the left, the bottom-right Status Bar, and the Command Palette under "Claude Code".',
+            'Click any Spark icon to open the Claude Code panel.',
+            'Click <strong>Sign in</strong> on the welcome screen and complete the OAuth flow in your browser using your Domo enterprise Claude account.',
+            'When the panel returns, the <strong>Learn Claude Code</strong> checklist appears — work through it or dismiss it with the X.'
           ],
           callouts: [
-            { type: 'danger', text: 'Do NOT click the top authentication button — it will ask for a Max or Pro subscription you don\'t have. Use the <strong>middle/console button</strong> to authenticate with your enterprise account.' }
+            { type: 'info', text: 'The 2026 extension uses a single browser-based <strong>Sign in</strong> button — no separate "console" or "Max/Pro" buttons. Just sign in with the Domo enterprise account you registered in step 1.' },
+            { type: 'warning', text: 'Requires VS Code 1.98 or later. If the Spark icon doesn\'t appear, check Help → About, then run <strong>Developer: Reload Window</strong> from the Command Palette (Cmd+Shift+P).' }
           ],
           commands: [],
           troubleshooting: [
-            { symptom: '"You need a Max or Pro subscription" error', fix: 'You clicked the wrong button. Look for the middle or "console" authentication button, not the top one. The enterprise auth uses a different flow.' }
+            { symptom: 'No Spark icon visible after install', fix: 'Open a file (the editor-toolbar icon needs an open file). Otherwise check the bottom-right Status Bar for <strong>✱ Claude Code</strong>, or run <strong>Developer: Reload Window</strong> from the Command Palette.' },
+            { symptom: 'Sign-in screen reappears after authenticating', fix: 'If <code>ANTHROPIC_API_KEY</code> is set in your shell, VS Code may not have inherited it — relaunch VS Code from a terminal with <code>code .</code>, or just sign in with your Claude account.' },
+            { symptom: '"Not logged in · Please run /login"', fix: 'Type <code>/login</code> in the prompt box, or run <strong>Developer: Reload Window</strong> and the sign-in screen will reopen.' }
           ],
-          verification: 'The Claude icon appears in your VS Code sidebar, and you can open a new Claude session without subscription errors.'
+          verification: 'The Spark icon is visible in VS Code, the panel opens to a prompt box, and your account shows under <code>/</code> → settings.'
         },
         {
           id: 'install-notifier',
@@ -204,25 +207,29 @@ const GUIDE_DATA = {
           title: 'Install Node.js & NPM',
           minutes: 3,
           instructions: [
-            'Run the two commands below to set up FNM\'s environment and install the latest LTS version of Node.js.',
-            'After installing, <strong>close your terminal completely and open a new one</strong>.',
-            'In the new terminal, verify the installation with the verification commands.'
+            'Run the <strong>Set up FNM environment</strong> command to enable FNM in your current terminal, then <strong>Install Node.js</strong> to download the latest LTS.',
+            '<strong>Persist FNM for future terminals.</strong> FNM doesn\'t install <code>node</code>/<code>npm</code> into a fixed PATH location — it relies on a shell hook (the <code>eval</code> line). Without persisting it, every new terminal will fail with "command not found." Run the <strong>Persist FNM in ~/.zshrc</strong> command to add the hook to your zsh startup file. The <code>grep -q</code> guard makes it safe to re-run.',
+            '<strong>Open a fresh terminal window</strong> (or run <code>source ~/.zshrc</code>) so the new shell startup file takes effect.',
+            'In the fresh terminal, verify with the <code>node -v</code> and <code>npm -v</code> commands.'
           ],
           callouts: [
-            { type: 'warning', text: 'After installing Node via FNM, you <strong>must</strong> close your terminal and open a fresh one. New packages aren\'t recognized until you start a new terminal session.' }
+            { type: 'warning', text: 'After installing Node via FNM, you <strong>must</strong> open a fresh terminal (or <code>source ~/.zshrc</code>) before <code>node</code> resolves. The PATH only updates in new shell sessions.' },
+            { type: 'info', text: '<strong>Using bash instead of zsh?</strong> macOS defaults to zsh since Catalina (2019), but if your shell is bash, replace <code>~/.zshrc</code> with <code>~/.bashrc</code> in the persist command. Check your shell with <code>echo $SHELL</code>.' }
           ],
           commands: [
-            { label: 'Set up FNM environment', cmd: 'eval "$(fnm env --use-on-cd)"', output: '' },
+            { label: 'Set up FNM environment (current session)', cmd: 'eval "$(fnm env --use-on-cd)"', output: '' },
             { label: 'Install Node.js (latest LTS)', cmd: 'fnm install --lts', output: 'Installing Node vXX.x.x (arm64)\ninstalled successfully' },
-            { label: 'Verify Node (run in NEW terminal)', cmd: 'node -v', output: 'v22.x.x' },
+            { label: 'Persist FNM in ~/.zshrc (safe to re-run)', cmd: 'grep -q \'fnm env\' ~/.zshrc 2>/dev/null || echo \'eval "$(fnm env --use-on-cd)"\' >> ~/.zshrc', output: '' },
+            { label: 'Verify Node (in a NEW terminal)', cmd: 'node -v', output: 'v22.x.x' },
             { label: 'Verify NPM', cmd: 'npm -v', output: '10.x.x' }
           ],
           troubleshooting: [
-            { symptom: '"node: command not found" after installing', fix: '<strong>Close your terminal completely</strong> (Cmd+Q, not just closing the tab) and open a brand new terminal. The PATH needs to refresh. Then try <code>node -v</code> again.' },
-            { symptom: 'Still not found after reopening terminal', fix: 'Run <code>eval "$(fnm env --use-on-cd)"</code> first, then try <code>node -v</code>. You may also need to add the fnm env line to your shell profile (~/.zshrc or ~/.zprofile).' },
-            { symptom: '"npx: command not found"', fix: 'Same fix — close/reopen terminal. NPM (and npx) come bundled with Node, so if node works, npx should too.' }
+            { symptom: '"node: command not found" in a fresh terminal', fix: 'You probably skipped the <strong>Persist FNM</strong> command. Run it now, then open a new terminal. Confirm the line is there with <code>grep \'fnm env\' ~/.zshrc</code> — you should see <code>eval "$(fnm env --use-on-cd)"</code>.' },
+            { symptom: 'I ran the persist command but new terminals still don\'t see node', fix: 'Check your shell with <code>echo $SHELL</code>. If it shows <code>/bin/bash</code> (not <code>/bin/zsh</code>), run the same persist command against <code>~/.bashrc</code> instead. Also confirm VS Code\'s integrated terminal isn\'t pinned to a different shell in Settings → Terminal → Integrated → Default Profile.' },
+            { symptom: '"npx: command not found"', fix: 'Same root cause — the FNM hook isn\'t in your shell startup. Persist it as above; <code>node</code>, <code>npm</code>, and <code>npx</code> all share the same FNM-managed PATH.' },
+            { symptom: 'Worried about duplicate lines in ~/.zshrc', fix: 'The <code>grep -q ... || echo ...</code> guard prevents dupes — re-running the persist command is a no-op once the line is already in the file. To inspect: <code>grep \'fnm env\' ~/.zshrc</code>.' }
           ],
-          verification: 'Running <code>node -v</code> shows a version (v22.x.x or similar) and <code>npm -v</code> shows a version (10.x.x or similar).'
+          verification: 'Open a brand new terminal window and run <code>node -v</code> and <code>npm -v</code> — both print versions without "command not found." Running <code>grep \'fnm env\' ~/.zshrc</code> shows the persisted hook line.'
         }
       ]
     },
@@ -241,7 +248,9 @@ const GUIDE_DATA = {
             'Skills are installed into the <code>~/.claude/</code> hidden folder on your system.'
           ],
           callouts: [
-            { type: 'info', text: 'The <code>~/.claude/</code> folder is hidden by default. In Finder, press <strong>Cmd+Shift+.</strong> to toggle hidden files.' }
+            { type: 'info', text: 'The <code>~/.claude/</code> folder is hidden by default. In Finder, press <strong>Cmd+Shift+.</strong> to toggle hidden files.' },
+            { type: 'info', text: 'Skills are organized into feature subdirectories in the source repo (<code>custom-apps/</code>, <code>app-studio/</code>, <code>domo-everywhere/</code>, <code>cli/</code>, <code>connectors/</code>, <code>(demo-skills)/</code>, …). The <code>--all</code> flag flattens them into <code>~/.claude/skills/</code> regardless.' },
+            { type: 'success', text: 'Alternative: just ask Claude — <em>"Install the Domo skills from https://github.com/stahura/domo-ai-vibe-rules/skills"</em> — and it will run the install command for you.' }
           ],
           commands: [
             { label: 'Install Domo skills', cmd: 'npx skills add https://github.com/stahura/domo-ai-vibe-rules/skills --all -g', output: 'Need to install the following packages:\n  skills\nOk to proceed? (y) y\n\nFound XX skills\nInstalling to XX agents...\n✓ Installed skill-1 to agent-1\n✓ Installed skill-2 to agent-2\n...\nDone!' }
@@ -276,10 +285,9 @@ const GUIDE_DATA = {
           title: 'Install Rules',
           minutes: 3,
           instructions: [
-            'Rules are separate from skills and must be installed manually. Go to the <a href="https://github.com/stahura/domo-ai-vibe-rules" target="_blank"><strong>Domo AI Vibe Rules repo</strong></a>.',
-            'Navigate to the <strong>rules/</strong> folder in the repo.',
-            'Download each rule file.',
-            'Place the rule files into <code>~/.claude/rules/</code> — this folder should be a peer (sibling) of the <code>~/.claude/skills/</code> folder.',
+            'Rules are separate from skills and must be installed manually. Go to the <a href="https://github.com/stahura/domo-ai-vibe-rules/tree/main/rules" target="_blank"><strong>rules/ folder</strong></a> of the Domo AI Vibe Rules repo.',
+            'Download each rule file (currently <code>core-custom-apps-rule.md</code> and <code>custom-app-gotchas.md</code>).',
+            'Place the rule files into <code>~/.claude/rules/</code> — this folder should be a peer (sibling) of the <code>~/.claude/skills/</code> folder. Create it with <code>mkdir -p ~/.claude/rules/</code> if it doesn\'t exist yet.',
             'That\'s it — rules are loaded automatically in every Claude session.'
           ],
           callouts: [
@@ -287,12 +295,13 @@ const GUIDE_DATA = {
             { type: 'warning', text: 'The <code>npx skills add</code> command does NOT install rules. You must download and place them manually.' }
           ],
           commands: [
-            { label: 'Verify rules folder exists', cmd: 'ls ~/.claude/rules/', output: 'orchestrator.md\nbest-practices.md' }
+            { label: 'Verify rules folder', cmd: 'ls ~/.claude/rules/', output: 'core-custom-apps-rule.md\ncustom-app-gotchas.md' }
           ],
           troubleshooting: [
-            { symptom: 'The rules/ folder doesn\'t exist', fix: 'Create it manually: <code>mkdir -p ~/.claude/rules/</code> and then copy the rule files in.' }
+            { symptom: 'The rules/ folder doesn\'t exist', fix: 'Create it manually: <code>mkdir -p ~/.claude/rules/</code> and then copy the rule files in.' },
+            { symptom: '<code>ls</code> shows the files but Claude doesn\'t seem aware of them', fix: 'Start a fresh Claude session. Rules are loaded once at session start, so existing sessions won\'t pick up newly added rule files.' }
           ],
-          verification: 'Running <code>ls ~/.claude/rules/</code> shows the rule files you downloaded.'
+          verification: 'Running <code>ls ~/.claude/rules/</code> shows <code>core-custom-apps-rule.md</code> and <code>custom-app-gotchas.md</code> (plus any others you added).'
         }
       ]
     },
@@ -301,49 +310,65 @@ const GUIDE_DATA = {
       title: 'Connect to Domo',
       steps: [
         {
-          id: 'create-access-token',
-          title: 'Create a Domo Access Token',
-          minutes: 3,
+          id: 'install-domo-clis',
+          title: 'Install the Domo CLIs',
+          minutes: 5,
           instructions: [
-            'Log in to the Domo instance you want to connect Claude to.',
-            'Go to <strong>Admin</strong> (gear icon) &rarr; <strong>Authentication</strong> &rarr; <strong>Access Tokens</strong>.',
-            'Click <strong>Create</strong> (or "Generate New Token").',
-            'Assign the token to <strong>yourself</strong>.',
-            'Give it a descriptive name like <strong>"Claude"</strong> or <strong>"Claude Code"</strong>.',
-            'Click <strong>Generate</strong> and <strong>copy the token</strong> immediately — you won\'t be able to see it again.'
+            'The Domo skills drive two CLIs under the hood: <code>ryuu</code> (the official Domo CLI, used for <code>domo login</code> / <code>domo dev</code> / <code>domo publish</code>) and <code>community-domo-cli</code> (used by skills for Product API calls — datasets, App Studio, cards, dataflows, AppDB, Code Engine, filesets, etc.).',
+            'Run the <strong>Install ryuu</strong> command below in your VS Code terminal. This installs the <code>domo</code> command globally via npm.',
+            'Run the <strong>Install pipx</strong> command — pipx isolates Python CLIs so they don\'t conflict with system Python. Then run <code>pipx ensurepath</code> and <strong>open a new terminal</strong> so the PATH update takes effect.',
+            'In the new terminal, run the <strong>Install community-domo-cli</strong> command. pipx will pull the CLI from GitHub and put a <code>community-domo-cli</code> command on your PATH.',
+            'Verify both CLIs respond to <code>--help</code>.'
           ],
           callouts: [
-            { type: 'warning', text: '<strong>You are responsible for everything Claude does with this token.</strong> The token inherits your permissions, and any content Claude creates will show as created by you. Keep the token secure.' },
-            { type: 'info', text: 'Access tokens are a temporary solution. In the future, a CLI tool will use your role and permissions directly without needing a token.' }
+            { type: 'info', text: 'These CLIs are installed once and used by Claude for the rest of your work — you don\'t run their commands directly very often. Claude reads the skills and invokes the right CLI for whatever you ask.' },
+            { type: 'warning', text: 'After <code>pipx ensurepath</code>, <strong>open a new terminal</strong> before running <code>pipx install</code>. Otherwise you\'ll see "command not found" for community-domo-cli even after install.' }
           ],
-          commands: [],
+          commands: [
+            { label: 'Install ryuu (Domo CLI)', cmd: 'npm install -g ryuu', output: 'added 1 package in Xs' },
+            { label: 'Install pipx (Python CLI installer)', cmd: 'brew install pipx && pipx ensurepath', output: '==> Installing pipx\n...\nSuccess! Added /Users/you/.local/bin to PATH.' },
+            { label: 'Install community-domo-cli (in a NEW terminal)', cmd: 'pipx install "git+https://github.com/stahura/community-domo-cli.git"', output: '  installed package community-domo-cli, ...\n  These apps are now globally available\n    - community-domo-cli\ndone! ✨' },
+            { label: 'Verify domo (ryuu)', cmd: 'domo --help', output: 'Usage: domo <command> [options]\n\nCommands:\n  login       Log in to a Domo instance\n  dev         Run a custom app locally\n  publish     Publish a custom app\n  ...' },
+            { label: 'Verify community-domo-cli', cmd: 'community-domo-cli --help', output: 'Usage: community-domo-cli [OPTIONS] COMMAND [ARGS]...\n\nCommands:\n  datasets, app-studio, cards, dataflows,\n  appdb, code-engine, filesets, workflows, ...' }
+          ],
           troubleshooting: [
-            { symptom: 'Can\'t find the Access Tokens page', fix: 'You may need admin access in the Domo instance. The path is: Admin &rarr; Authentication &rarr; Access Tokens.' },
-            { symptom: 'Lost the token after generating', fix: 'You\'ll need to generate a new one. The token is only shown once at creation time.' }
+            { symptom: '"command not found: pipx" after brew install', fix: 'Close your terminal and open a new one. <code>pipx ensurepath</code> updates your shell profile, but the change only takes effect in new sessions.' },
+            { symptom: '"command not found: community-domo-cli" after pipx install', fix: 'Run <code>pipx ensurepath</code> again, then close and reopen the terminal. If still missing, run <code>echo $PATH | tr \':\' \'\\n\' | grep .local/bin</code> — if no match, manually add <code>~/.local/bin</code> to your PATH.' },
+            { symptom: 'pipx install fails on git clone', fix: 'Check your network/VPN — pipx is pulling from GitHub. If you\'re on a corporate proxy, configure pip to use it: <code>pipx install --pip-args="--proxy=http://your-proxy" "git+https://github.com/stahura/community-domo-cli.git"</code>.' },
+            { symptom: '"npm: command not found"', fix: 'Go back to step 10 (Install Node.js & NPM). Close/reopen your terminal so the FNM-installed Node is on PATH.' }
           ],
-          verification: 'You have an access token copied to your clipboard or saved securely.'
+          verification: 'Both <code>domo --help</code> and <code>community-domo-cli --help</code> print usage info without errors.'
         },
         {
           id: 'authenticate-and-test',
-          title: 'Authenticate & Test Connection',
+          title: 'Log In & Test Connection',
           minutes: 5,
           instructions: [
-            'Open a Claude session in VS Code.',
-            'Type the prompt below, replacing <code>[instance]</code> with your Domo instance name and pasting your access token.',
-            'Claude will use the Domo skills to attempt to list datasets. If successful, it will report how many datasets it found.',
+            'Run <strong>domo login</strong> below, replacing <code>[instance]</code> with your Domo instance name (the part before <code>.domo.com</code>). A browser window will open — sign in with your Domo account. The CLI saves a session file at <code>~/.config/configstore/ryuu/[instance].json</code>.',
+            'Set the environment variables <code>DOMO_INSTANCE</code> and <code>DOMO_AUTH_MODE=ryuu-session</code>. <strong>Add these to your shell profile</strong> (<code>~/.zshrc</code> or <code>~/.zprofile</code>) so they persist across terminal sessions.',
+            'Sanity check the CLI from your terminal with <code>community-domo-cli datasets list</code>. If it returns rows, auth is working.',
+            'Now open Claude Code in VS Code and ask Claude to confirm the connection using the prompt below — Claude will use the skills + community-domo-cli to enumerate datasets.',
             'Once connected, try creating some sample cards to confirm everything works end-to-end.'
           ],
-          callouts: [],
+          callouts: [
+            { type: 'danger', text: '<strong>Token auth is deprecated.</strong> The old workflow of pasting an access token into a Claude prompt no longer works — community-domo-cli will reject <code>auth_mode=token</code>. The ryuu-session flow below is the only supported path.' },
+            { type: 'warning', text: '<strong>You are responsible for everything Claude does in this session.</strong> The CLI uses your Domo identity, so anything Claude creates will be attributed to you. Treat a Claude session like a remote shell with your credentials.' }
+          ],
           commands: [
-            { label: 'Test connection prompt', cmd: 'Can you see datasets in [instance].domo.com? Here\'s my access token: [paste your token here]', output: 'Yes! I can see datasets in [instance].domo.com.\nI found 13,000 datasets. Here are some examples:\n- Salesforce Opportunities\n- Marketing Campaign Data\n- HR Employee Records\n...' },
-            { label: 'Create sample cards prompt', cmd: 'Can you create me some example cards using a dataset in [instance].domo.com?', output: 'I\'ll create some sample cards for you. Let me find a good dataset...\n\nUsing: Salesforce Opportunities dataset\n\nCreating 5 cards:\n✓ Summary Card - Total Pipeline Value\n✓ Donut Chart - Opportunities by Stage\n✓ Bar Chart - Revenue by Region\n✓ Pie Chart - Win Rate by Rep\n✓ Line Chart - Monthly Trend\n\nHere are the links to your new cards:\n- https://[instance].domo.com/card/...' }
+            { label: 'Log in to Domo', cmd: 'domo login -i [instance].domo.com', output: 'Opening browser to authenticate...\n✓ Logged in as you@domo.com\nSession saved to ~/.config/configstore/ryuu/[instance].json' },
+            { label: 'Set env vars (add to ~/.zshrc to persist)', cmd: 'export DOMO_INSTANCE=[instance]\nexport DOMO_AUTH_MODE=ryuu-session', output: '' },
+            { label: 'Sanity check from terminal', cmd: 'community-domo-cli datasets list --limit 3', output: '[\n  {"id": "abc-123", "name": "Salesforce Opportunities", ...},\n  {"id": "def-456", "name": "Marketing Campaign Data", ...},\n  {"id": "ghi-789", "name": "HR Employee Records", ...}\n]' },
+            { label: 'Test connection prompt (in Claude Code)', cmd: 'Confirm you can see datasets in [instance].domo.com using the community-domo-cli. List a few examples.', output: 'Yes — I ran `community-domo-cli datasets list` against [instance].domo.com.\nI found ~13,000 datasets. Here are some examples:\n- Salesforce Opportunities\n- Marketing Campaign Data\n- HR Employee Records\n...' },
+            { label: 'Create sample cards prompt', cmd: 'Create 5 example cards in [instance].domo.com using a Salesforce-style dataset.', output: 'Using: Salesforce Opportunities dataset\n\nCreating 5 cards via the card-creation skill:\n✓ Summary Card - Total Pipeline Value\n✓ Donut Chart - Opportunities by Stage\n✓ Bar Chart - Revenue by Region\n✓ Pie Chart - Win Rate by Rep\n✓ Line Chart - Monthly Trend\n\nLinks:\n- https://[instance].domo.com/card/...' }
           ],
           troubleshooting: [
-            { symptom: 'Claude says it can\'t connect or finds 0 datasets', fix: 'Double-check that your access token is correct (no extra spaces) and that you\'re using the right instance name. The instance name is the part before .domo.com.' },
-            { symptom: 'Card link shows "no access"', fix: 'This is a Domo permissions issue. The card was created successfully but you may not have the right page-level access. Ask an admin to check.' },
-            { symptom: 'Claude doesn\'t use the Domo skills', fix: 'Make sure skills are installed (Step 11-12). Start a fresh Claude session — sometimes restarting is needed after installing skills.' }
+            { symptom: '"Token auth mode is no longer supported"', fix: 'Run <code>domo login -i [instance].domo.com</code> again and confirm <code>DOMO_AUTH_MODE=ryuu-session</code> is set in your environment. Token auth was removed from community-domo-cli — only ryuu-session is supported now.' },
+            { symptom: '<code>community-domo-cli datasets list</code> returns 0 rows or an auth error', fix: 'Verify <code>$DOMO_INSTANCE</code> is just the subdomain (e.g. <code>modocorp</code>, not <code>modocorp.domo.com</code>) and that the session file exists: <code>ls ~/.config/configstore/ryuu/</code>. Re-run <code>domo login</code> if needed.' },
+            { symptom: 'Claude doesn\'t use the Domo skills', fix: 'Start a fresh Claude session (skills load at session start). Confirm skills are installed with <code>ls ~/.claude/skills/</code>. If empty, re-run the skills install (step 11).' },
+            { symptom: 'Card link shows "no access"', fix: 'A Domo permissions issue, not a Claude issue. The card was created but you may not have page-level access. Ask an admin.' },
+            { symptom: 'Env vars don\'t persist after closing the terminal', fix: 'You ran <code>export</code> in the current shell only. Add the two <code>export</code> lines to <code>~/.zshrc</code> (or <code>~/.zprofile</code>), then reload with <code>source ~/.zshrc</code>.' }
           ],
-          verification: 'Claude reports finding datasets in your instance, and you can click the card links and see them in Domo.'
+          verification: 'Both <code>community-domo-cli datasets list</code> and Claude (in VS Code) return real datasets from your instance, and you can open created cards in Domo.'
         }
       ]
     },
@@ -356,23 +381,32 @@ const GUIDE_DATA = {
           title: 'Modes, Sessions & Tips',
           minutes: 5,
           instructions: [
-            '<strong>Plan Mode:</strong> Before building anything complex, switch to Plan Mode. Claude will ask you clarifying questions and create a markdown plan before writing any code. Spend 10-20 minutes on planning — it dramatically improves output quality.',
-            '<strong>Auto Mode:</strong> The default mode. Claude will ask for permission before making edits.',
-            '<strong>Bypass Permissions Mode:</strong> Lets Claude make changes without asking. Enable it in VS Code &rarr; Extensions &rarr; Claude Code &rarr; Settings (gear icon) &rarr; check <strong>"Allow Bypass Permissions Mode"</strong>. A new mode option appears in the Claude panel.',
-            '<strong>Session Management:</strong> The VS Code extension saves all your sessions. Use the search feature in the Claude panel to find and resume previous sessions.',
-            '<strong>CLAUDE.md:</strong> This file provides persistent instructions to Claude across all sessions. Use it sparingly — too many instructions can cause Claude to make unwanted assumptions. Only include things that are truly always applicable.',
-            '<strong>Rules vs Skills:</strong> Rules are loaded into every prompt (always-on context). Skills are invoked on-demand. For Domo work, the skills handle specific tasks (create a card, query a dataset). Rules provide general routing and best practices.',
-            '<strong>Pro tip:</strong> While Claude is working, you can keep adding messages to queue up additional instructions. Claude will take them into account as it works.'
+            '<strong>Permission modes</strong> control how aggressive Claude is about changes. Click the mode indicator at the bottom of the prompt box to switch. The four core modes:',
+            '&nbsp;&nbsp;• <strong>Default</strong> — Claude asks permission before each file edit or shell command.',
+            '&nbsp;&nbsp;• <strong>Plan</strong> — Claude describes what it will do and waits for approval. VS Code opens the plan as a full markdown document where you can <em>add inline comments</em> before approving. Best for complex tasks.',
+            '&nbsp;&nbsp;• <strong>Accept Edits</strong> — Claude applies file edits without asking, but still asks for shell commands.',
+            '&nbsp;&nbsp;• <strong>Bypass Permissions</strong> — no prompts at all (also unlocks <strong>Auto mode</strong>). Hidden by default. Enable in VS Code Settings → Extensions → Claude Code → check <strong>"Allow Dangerously Skip Permissions"</strong>. Only use in sandboxed/disposable workspaces.',
+            '<strong>Checkpoints &amp; rewind:</strong> Hover any message in the conversation to reveal a rewind button. You can <em>fork conversation from here</em>, <em>rewind code to here</em>, or do both — undoes Claude\'s edits without losing chat history.',
+            '<strong>Session history:</strong> The <strong>Session history</strong> button at the top of the Claude panel lets you search by keyword or browse by time (Today / Yesterday / Last 7 days). New sessions get AI-generated titles you can rename.',
+            '<strong>Multiple conversations:</strong> Open additional tabs or windows via <strong>Cmd+Shift+P → "Claude Code: Open in New Tab"</strong>. Each tab keeps its own context — useful for parallel tasks. A small dot on the Spark icon means a permission request is pending or Claude finished while the tab was hidden.',
+            '<strong>Useful slash commands:</strong> <code>/usage</code> shows plan usage, <code>/compact</code> manually compacts context, <code>/plugins</code> manages plugins, <code>/login</code> reauthenticates, <code>/mcp</code> manages MCP servers. Type <code>/</code> in the prompt box to see the full list.',
+            '<strong>Extended thinking:</strong> Toggle via the <code>/</code> menu — Claude spends more time reasoning before responding. Useful for complex Domo schema or query design.',
+            '<strong>CLAUDE.md:</strong> Provides persistent instructions across sessions. Use sparingly — too many instructions can cause unwanted assumptions. Only include things that are always applicable. Some practitioners avoid it entirely.',
+            '<strong>Rules vs Skills:</strong> Rules are loaded into every prompt (always-on context). Skills are invoked on-demand based on the task. For Domo work, your two rules (core + gotchas) provide routing context; the ~50 skills handle specific tasks.',
+            '<strong>Pro tip:</strong> While Claude is working you can keep typing — additional messages queue up and Claude takes them into account on its next turn.'
           ],
           callouts: [
-            { type: 'info', text: 'Riley\'s advice: <em>"You\'ll be a lot more successful with whatever you\'re trying to do with Claude the more effort you put into the planning phase."</em> The best users spend 10-20 minutes on their initial prompt and almost never have to fix issues.' },
-            { type: 'warning', text: 'Be cautious with CLAUDE.md. Some practitioners recommend not using it at all because it can negatively impact agent performance. If you do use it, keep it short and focused.' }
+            { type: 'info', text: 'Riley\'s advice: <em>"You\'ll be a lot more successful with whatever you\'re trying to do with Claude the more effort you put into the planning phase."</em> The best users spend 10-20 minutes setting up the initial prompt (or use Plan mode) and almost never have to fix issues.' },
+            { type: 'warning', text: '<strong>Bypass Permissions / Auto mode is dangerous.</strong> Anything Claude does runs against your real Domo identity (cards created, data deleted, etc.) and your real filesystem. The Anthropic docs literally say "use only in sandboxes with no internet access." Default or Accept Edits is safer for most work.' }
           ],
           commands: [],
           troubleshooting: [
-            { symptom: 'Don\'t see Auto Mode or Bypass Permissions as options', fix: 'Go to VS Code &rarr; Extensions &rarr; Claude Code &rarr; click the gear icon &rarr; Settings &rarr; check "Allow Bypass Permissions Mode". The new modes will appear.' }
+            { symptom: 'Don\'t see Bypass Permissions or Auto mode in the mode selector', fix: 'Open VS Code Settings (Cmd+,), search for <strong>"Allow Dangerously Skip Permissions"</strong> under Extensions → Claude Code, and check the box. The new modes appear in the prompt box mode selector.' },
+            { symptom: 'Plan mode doesn\'t open a markdown doc', fix: 'Make sure your VS Code extension is up to date — the inline-plan-doc feature is recent. Run <strong>"Extensions: Check for Updates"</strong> from the Command Palette.' },
+            { symptom: 'Can\'t find old sessions', fix: 'Use the <strong>Session history</strong> button at the top of the Claude panel — it lists local sessions by recency. Sessions from claude.ai (web) appear under the <strong>Remote</strong> tab if you signed in with a Claude.ai subscription account.' },
+            { symptom: 'Want to switch from extension to CLI mid-conversation', fix: 'In VS Code\'s integrated terminal run <code>claude --resume</code> — you can search for and resume the same conversation in the CLI. Conversation history is shared.' }
           ],
-          verification: 'You understand the three modes (Plan, Auto, Bypass) and can switch between them in the Claude panel. You can find and resume previous sessions.'
+          verification: 'You can switch permission modes from the prompt box, find/resume past sessions from the Session history dialog, and use the rewind feature on a message.'
         }
       ]
     }
